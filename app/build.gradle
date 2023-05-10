@@ -48,6 +48,14 @@ android {
 
 dependencies {
 
+    // Lifecycle
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
+    annotationProcessor 'android.arch.lifecycle:compiler:1.1.1'
+
+    // Room
+    implementation 'androidx.room:room-runtime:2.5.1'
+    annotationProcessor 'androidx.room:room-compiler:2.5.1'
+
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
     implementation 'androidx.activity:activity-compose:1.5.1'
