@@ -1,6 +1,5 @@
 package com.example.architectureexample
 
-import android.icu.text.CaseMap.Title
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
