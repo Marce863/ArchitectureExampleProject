@@ -1,9 +1,11 @@
 package com.example.architectureexample
 
 import android.content.Context
+import android.os.AsyncTask
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 /*
 Class for the Room database that'll connect all the components inside of Room
@@ -30,10 +32,30 @@ abstract class NoteDatabase : RoomDatabase() {
                     ctx.applicationContext,
                     NoteDatabase::class.java,
                     "note_database"
-                ).fallbackToDestructiveMigration().build()
+                ).fallbackToDestructiveMigration().addCallback(roomCallback).build()
             }
 
             return instance!!
+        }
+
+        private val roomCallback = object : Callback() {
+            override fun onCreate(db: SupportSQLiteDatabase) {
+                super.onCreate(db)
+                PopulateDbAsyncTask(instance!!).execute()
+            }
+        }
+
+        /*
+        Initialize the Database with some information
+         */
+        private class PopulateDbAsyncTask(db: NoteDatabase) : AsyncTask<Void, Void, Void>() {
+            private val noteDao: NoteDao = db.noteDao()
+            override fun doInBackground(vararg voids: Void?): Void? {
+                noteDao.insert(Note("Title 1", "Description 1", 1))
+                noteDao.insert(Note("Title 2", "Description 2", 2))
+                noteDao.insert(Note("Title 3", "Description 3", 3))
+                return null
+            }
         }
     }
 }
