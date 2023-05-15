@@ -13,5 +13,8 @@ Each SQLite table needs a primary key to uniquely identify each entry
  */
 @Entity(tableName = "note_table")
 class Note(
-    @PrimaryKey val id: Int, val title: String, val description: String, val priority: Int
+    val title: String,
+    val description: String,
+    val priority: Int,
+    @PrimaryKey(autoGenerate = false) val id: Int? = null
 )
