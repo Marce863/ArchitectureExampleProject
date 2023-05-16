@@ -18,13 +18,13 @@ interface NoteDao {
 
     // Database operation
     @Insert
-    fun insert(note : Note)
+    suspend fun insert(note : Note)
 
     @Update
-    fun update(note : Note)
+    suspend fun update(note : Note)
 
     @Delete
-    fun delete(note : Note)
+    suspend fun delete(note : Note)
 
     /*
     Delete all notes at once
