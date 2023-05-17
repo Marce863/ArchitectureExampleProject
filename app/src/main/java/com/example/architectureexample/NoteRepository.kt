@@ -1,6 +1,8 @@
 package com.example.architectureexample
 
+import android.app.Application
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.CoroutineScope
 
 /*
 MVVM Architecture
@@ -11,7 +13,14 @@ Application is used because later in our view model we'll get passed in applicat
 and since application is subclass of context we can use it as our context to make
 our database instance
  */
-class NoteRepository(private val noteDao : NoteDao) {
+class NoteRepository(application: Application, scope: CoroutineScope) {
+
+    private val noteDao: NoteDao
+
+    init {
+        val noteDb: NoteDatabase = NoteDatabase.getInstance(application, scope)
+        noteDao = noteDb.noteDao()
+    }
 
     /*
     Room automatically executes the database operations that return live
@@ -26,13 +35,13 @@ class NoteRepository(private val noteDao : NoteDao) {
     These are the APIs that repository exposes to the outside
      */
 
-    suspend fun insert(note : Note) = noteDao.insert(note)
+    suspend fun insert(note: Note) = noteDao.insert(note)
 
-    suspend fun update(note : Note) = noteDao.update(note)
+    suspend fun update(note: Note) = noteDao.update(note)
 
-    suspend fun delete(note : Note) = noteDao.delete(note)
+    suspend fun delete(note: Note) = noteDao.delete(note)
 
     fun deleteAllNotes() = noteDao.deleteAllNotes()
 
-    fun getAllNotes() : LiveData<List<Note>> = noteDao.getAllNotes()
+    fun getAllNotes(): LiveData<List<Note>> = noteDao.getAllNotes()
 }
