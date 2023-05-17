@@ -18,13 +18,13 @@ interface NoteDao {
 
     // Database operation
     @Insert
-    suspend fun insert(note : Note)
+    suspend fun insert(note: Note)
 
     @Update
-    suspend fun update(note : Note)
+    suspend fun update(note: Note)
 
     @Delete
-    suspend fun delete(note : Note)
+    suspend fun delete(note: Note)
 
     /*
     Delete all notes at once
@@ -49,5 +49,5 @@ interface NoteDao {
     cares of all necessary stuff to update the LiveData object, just declare
      */
     @Query("SELECT * FROM note_table ORDER BY priority DESC")
-    fun getAllNotes() : LiveData<List<Note>>
+    fun getAllNotes(): LiveData<List<Note>>
 }
