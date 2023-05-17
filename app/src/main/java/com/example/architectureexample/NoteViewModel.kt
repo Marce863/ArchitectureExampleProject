@@ -2,7 +2,9 @@ package com.example.architectureexample
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class NoteViewModel(application: Application) :
@@ -10,15 +12,15 @@ class NoteViewModel(application: Application) :
 
     private val repository: NoteRepository = NoteRepository(application, viewModelScope)
 
-    fun insert(note: Note) = viewModelScope.launch {
+    fun insert(note: Note) = viewModelScope.launch(Dispatchers.IO) {
         repository.insert(note)
     }
 
-    fun update(note: Note) = viewModelScope.launch {
+    fun update(note: Note) = viewModelScope.launch(Dispatchers.IO) {
         repository.update(note)
     }
 
-    fun delete(note: Note) = viewModelScope.launch {
+    fun delete(note: Note) = viewModelScope.launch(Dispatchers.IO) {
         repository.delete(note)
     }
 
@@ -26,7 +28,7 @@ class NoteViewModel(application: Application) :
         repository.deleteAllNotes()
     }
 
-    fun getAllNotes() {
-        repository.getAllNotes()
+    fun getAllNotes(): LiveData<List<Note>> {
+        return repository.getAllNotes()
     }
 }
