@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Architecture Example</string>
+    <string name="hello_world">Hello World, Ni hao world, Yee world</string>
 </resources>
