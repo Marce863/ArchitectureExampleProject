@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--    This item is being used to show the save buttom.-->
+<!--    showAsAction set to ifRoom so it's dispalyed if there's room-->
+    <item
+        android:id="@+id/save_note"
+        android:icon="@drawable/baseline_save"
+        android:title="Save"
+        app:showAsAction="ifRoom"/>
+</menu>
