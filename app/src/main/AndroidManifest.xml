@@ -12,11 +12,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ArchitectureExample"
         tools:targetApi="31">
+<!--    The parent activity lets the system know what to go back to when we
+        close the AddNoteActivity-->
+<!--    Change the theme for both Activities because of crashing app, since we're
+        extending the ActionBarActivity we need to have a theme with an ActionBar-->
+        <activity
+            android:name=".AddNoteActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme"
+            android:exported="false" />
+<!--    The singleTop launchMode lets us go back to the MainActivity without
+        going back into the onCreate method, since we just want to go back-->
         <activity
             android:name=".MainActivity"
+            android:launchMode="singleTop"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.ArchitectureExample">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

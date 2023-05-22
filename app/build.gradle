@@ -60,6 +60,8 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     def room_version = '2.5.1'
 
     // Lifecycle
@@ -69,7 +71,7 @@ dependencies {
     // Room
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
-    androidTestImplementation "androidx.room:room-testing$room_version"
+    androidTestImplementation "androidx.room:room-testing:$room_version"
 
     // Floating action button && Card view
     implementation 'com.google.android.material:material:1.9.0'
