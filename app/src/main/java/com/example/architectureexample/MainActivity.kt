@@ -2,16 +2,18 @@ package com.example.architectureexample
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.architectureexample.ui.theme.ArchitectureExampleTheme
@@ -66,6 +68,34 @@ class MainActivity : ComponentActivity() {
                     adapter.notes = list
                 }
             })
+
+        // Swipe to delete functionality
+        // ItemTouchHelper gives our recycler view the ability to swipe
+        // The values passed into the simple call back are for swipe directions allowed
+        val itemTouchHelperCallBack = object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            // This is for drag and drop, not needed for our use case
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false;
+            }
+
+            // On swipe delete the note at the position given by the view holder
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val notePosition = viewHolder.adapterPosition
+                noteViewModel.delete(adapter.getNoteAt(notePosition))
+                Toast.makeText(this@MainActivity, "Note deleted", Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallBack)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
+
+        actionBar?.show()
     }
 
     // This is where we get the result back when the Activity we called with an intent
@@ -78,8 +108,8 @@ class MainActivity : ComponentActivity() {
         // Check if we're dealing with this Activities request and if result is ok
         if (requestCode == ADD_NOTE_REQUEST && resultCode == RESULT_OK) {
             val title: String = data?.getStringExtra(AddNoteActivity.EXTRA_TITLE)!!
-            val description: String = data?.getStringExtra(AddNoteActivity.EXTRA_DESCRIPTION)!!
-            val priority: Int = data?.getIntExtra(AddNoteActivity.EXTRA_PRIORITY, 1)!!
+            val description: String = data.getStringExtra(AddNoteActivity.EXTRA_DESCRIPTION)!!
+            val priority: Int = data.getIntExtra(AddNoteActivity.EXTRA_PRIORITY, 1)
 
             val note: Note = Note(title, description, priority)
             noteViewModel.insert(note)
@@ -88,6 +118,30 @@ class MainActivity : ComponentActivity() {
         } else {
             // This is for when the cancel button is pressed instead
             Toast.makeText(this, "Note not saved", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Need to override this to add the menu item we created to delete all notes
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
+        val menuInflater: MenuInflater = menuInflater
+        menuInflater.inflate(R.menu.main_menu, menu)
+
+        return true
+    }
+
+    // When delete
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.delete_all_notes -> {
+                noteViewModel.deleteAllNotes()
+                Toast.makeText(this, "All notes deleted", Toast.LENGTH_SHORT).show()
+                return true
+            }
+
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
         }
     }
 }

@@ -29,6 +29,10 @@ class NoteAdapter : RecyclerView.Adapter<NoteAdapter.NoteHolder>() {
             notifyDataSetChanged()
         }
 
+    fun getNoteAt(position: Int): Note {
+        return notes[position]
+    }
+
     /*
     ViewHolder is a class that is used to hold references to the views in a
     RecyclerView item. Instead of creating a new view for each item, the ViewHolder
