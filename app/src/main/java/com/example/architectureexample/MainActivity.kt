@@ -6,7 +6,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.architectureexample.ui.theme.ArchitectureExampleTheme
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     companion object {
         const val ADD_NOTE_REQUEST: Int = 1
@@ -94,8 +94,6 @@ class MainActivity : ComponentActivity() {
 
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallBack)
         itemTouchHelper.attachToRecyclerView(recyclerView)
-
-        actionBar?.show()
     }
 
     // This is where we get the result back when the Activity we called with an intent
