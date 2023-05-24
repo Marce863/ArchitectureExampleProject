@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ArchitectureExample"
+        android:theme="@style/AppTheme"
         tools:targetApi="31">
 <!--    The parent activity lets the system know what to go back to when we
         close the AddNoteActivity-->
@@ -19,7 +19,6 @@
         <activity
             android:name=".AddNoteActivity"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme"
             android:exported="false" />
 <!--    The singleTop launchMode lets us go back to the MainActivity without
         going back into the onCreate method, since we just want to go back-->
@@ -27,8 +26,7 @@
             android:name=".MainActivity"
             android:launchMode="singleTop"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

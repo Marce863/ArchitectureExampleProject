@@ -79,14 +79,15 @@ class AddNoteActivity : AppCompatActivity() {
     When our save button is clicked we want to save the note
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        super.onOptionsItemSelected(item)
         return when (item.itemId) {
             R.id.save_note -> {
                 saveNote()
                 return true
             }
 
-            else -> super.onOptionsItemSelected(item)
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
         }
     }
 
