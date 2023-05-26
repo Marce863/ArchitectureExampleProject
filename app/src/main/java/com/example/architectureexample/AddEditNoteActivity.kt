@@ -30,9 +30,10 @@ data back to our main activity when this one is closed.
 We do this over intent extras, for intent extras we need a key and for
 best practice we use constants string that uses the package name.
  */
-class AddNoteActivity : AppCompatActivity() {
+class AddEditNoteActivity : AppCompatActivity() {
     companion object {
         // Key for sending our title, description and priority over Intents
+        const val EXTRA_ID: String = "com.exmaple.architectureexample.EXTRA_ID"
         const val EXTRA_TITLE: String = "com.example.architectureexample.EXTRA_TITLE"
         const val EXTRA_DESCRIPTION: String = "com.example.architectureexample.EXTRA_DESCRIPTION"
         const val EXTRA_PRIORITY: String = "com.example.architectureexample.EXTRA_PRIORITY"
@@ -56,8 +57,19 @@ class AddNoteActivity : AppCompatActivity() {
         // In order to get the X in to top left corner
         supportActionBar?.setHomeAsUpIndicator(R.drawable.baseline_close)
 
-        // This is the title for the ActionBar
-        title = "Add Note"
+        // Our title now changes based on how we got to this Activity
+        // The intent will only have an ID when we update
+        val intent: Intent = intent
+        if (intent.hasExtra(EXTRA_ID)) {
+            title = "Edit Note"
+            editTextTitle.setText(intent.getStringExtra(EXTRA_TITLE))
+            editTextDescription.setText(intent.getStringExtra(EXTRA_DESCRIPTION))
+            numberPickerPriority.value = intent.getStringExtra(EXTRA_PRIORITY)?.toInt() ?: 1
+            numberPickerPriority.value = intent.getIntExtra(EXTRA_PRIORITY, -1)
+        } else {
+            // This is the title for the ActionBar
+            title = "Add Note"
+        }
     }
 
     /*
@@ -110,6 +122,12 @@ class AddNoteActivity : AppCompatActivity() {
         data.putExtra(EXTRA_TITLE, title)
         data.putExtra(EXTRA_DESCRIPTION, description)
         data.putExtra(EXTRA_PRIORITY, priority)
+
+        // TODO: I need to figure out how to get ID so I can send it back to MainActivity
+        val id: Int = intent.getIntExtra(EXTRA_ID, -1)
+        if (id != -1) {
+            data.putExtra(EXTRA_ID, id)
+        }
 
         // We indicate if the input was successful or not. If user hits back button
         // it wasn't successful but if user hits save button and everything is fine

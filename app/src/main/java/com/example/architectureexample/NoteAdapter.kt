@@ -19,6 +19,9 @@ the RecyclerView. It determines how to items are arranged, such as in a linear
 vertical list or a grid.
  */
 class NoteAdapter : RecyclerView.Adapter<NoteAdapter.NoteHolder>() {
+
+    private lateinit var listener: OnItemClickListener
+
     // Our list of Notes is initialize to avoid null pointers
     var notes: List<Note> = arrayListOf()
         set(value) {
@@ -39,15 +42,16 @@ class NoteAdapter : RecyclerView.Adapter<NoteAdapter.NoteHolder>() {
     recycles teh existing views.
     The ViewHolder acts as a container for views in a RecyclerView
      */
-    class NoteHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textViewTitle: TextView
-        val textViewDescription: TextView
-        val textViewPriority: TextView
+    inner class NoteHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val textViewTitle: TextView = itemView.findViewById(R.id.text_view_title)
+        val textViewDescription: TextView = itemView.findViewById(R.id.text_view_description)
+        val textViewPriority: TextView = itemView.findViewById(R.id.text_view_priority)
 
         init {
-            textViewTitle = itemView.findViewById(R.id.text_view_title)
-            textViewDescription = itemView.findViewById(R.id.text_view_description)
-            textViewPriority = itemView.findViewById(R.id.text_view_priority)
+            itemView.setOnClickListener {
+                val position: Int = adapterPosition
+                listener.onItemClick(notes[position])
+            }
         }
     }
 
@@ -73,5 +77,13 @@ class NoteAdapter : RecyclerView.Adapter<NoteAdapter.NoteHolder>() {
         holder.textViewTitle.text = currentNote.title
         holder.textViewDescription.text = currentNote.description
         holder.textViewPriority.text = currentNote.priority.toString()
+    }
+
+    interface OnItemClickListener {
+        fun onItemClick(note : Note);
+    }
+
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        this.listener = listener
     }
 }
