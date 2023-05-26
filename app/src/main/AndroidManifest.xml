@@ -17,7 +17,7 @@
 <!--    Change the theme for both Activities because of crashing app, since we're
         extending the ActionBarActivity we need to have a theme with an ActionBar-->
         <activity
-            android:name=".AddNoteActivity"
+            android:name=".AddEditNoteActivity"
             android:parentActivityName=".MainActivity"
             android:exported="false" />
 <!--    The singleTop launchMode lets us go back to the MainActivity without

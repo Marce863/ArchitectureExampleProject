@@ -18,5 +18,5 @@ class Note(
     val title: String,
     val description: String,
     val priority: Int,
-    @PrimaryKey(autoGenerate = false) val id: Int? = null
+    @PrimaryKey(autoGenerate = false) var id: Int? = null
 )

@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val ADD_NOTE_REQUEST: Int = 1
+        const val EDIT_NOTE_REQUEST: Int = 2
     }
 
     private lateinit var noteViewModel: NoteViewModel
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         val buttonAddNote: FloatingActionButton = findViewById(R.id.button_add_note)
         buttonAddNote.setOnClickListener {
             // Intent is a Java class so we do it this way instead AddNoteActivity.class
-            val intent: Intent = Intent(this, AddNoteActivity::class.java)
+            val intent: Intent = Intent(this, AddEditNoteActivity::class.java)
 
             // Typical way of calling an intent is doing startActivity(intent) but we
             // are expecting some data back so we do
@@ -51,6 +52,22 @@ class MainActivity : AppCompatActivity() {
 
         val adapter: NoteAdapter = NoteAdapter()
         recyclerView.adapter = adapter
+
+        // Add the listener for when a Note is clicked
+        adapter.setOnItemClickListener(object : NoteAdapter.OnItemClickListener {
+            override fun onItemClick(note : Note) {
+                // I can't pass in "this" because I'm inside an anonymous inner class
+                val intent: Intent = Intent(this@MainActivity, AddEditNoteActivity::class.java)
+                // Room needs the primary key to figure out which entry it's supposed to update
+                // since that's the unique identifier
+                intent.putExtra(AddEditNoteActivity.EXTRA_ID, note.id)
+                // Now here we need to pass over the title, description and priority
+                intent.putExtra(AddEditNoteActivity.EXTRA_TITLE, note.title)
+                intent.putExtra(AddEditNoteActivity.EXTRA_DESCRIPTION, note.description)
+                intent.putExtra(AddEditNoteActivity.EXTRA_PRIORITY, note.priority)
+                startActivityForResult(intent, EDIT_NOTE_REQUEST)
+            }
+        })
 
         noteViewModel = ViewModelProvider(
             this,
@@ -97,22 +114,42 @@ class MainActivity : AppCompatActivity() {
     }
 
     // This is where we get the result back when the Activity we called with an intent
-    // is closed.
+    // is closed. The requestCode helps determine if it's Edit or Add
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         // TODO: Update this deprecated override
         super.onActivityResult(requestCode, resultCode, data)
 
         // This handles what request we're dealing with
         // Check if we're dealing with this Activities request and if result is ok
+        // This is the request for when we Add a note
         if (requestCode == ADD_NOTE_REQUEST && resultCode == RESULT_OK) {
-            val title: String = data?.getStringExtra(AddNoteActivity.EXTRA_TITLE)!!
-            val description: String = data.getStringExtra(AddNoteActivity.EXTRA_DESCRIPTION)!!
-            val priority: Int = data.getIntExtra(AddNoteActivity.EXTRA_PRIORITY, 1)
+            val title: String = data?.getStringExtra(AddEditNoteActivity.EXTRA_TITLE)!!
+            val description: String = data.getStringExtra(AddEditNoteActivity.EXTRA_DESCRIPTION)!!
+            val priority: Int = data.getIntExtra(AddEditNoteActivity.EXTRA_PRIORITY, 1)
 
             val note: Note = Note(title, description, priority)
             noteViewModel.insert(note)
 
             Toast.makeText(this, "Note saved", Toast.LENGTH_SHORT).show()
+
+        // This is the logic for when we Edit a note
+        } else if (requestCode == EDIT_NOTE_REQUEST && resultCode == RESULT_OK) {
+            val id: Int? = data?.getIntExtra(AddEditNoteActivity.EXTRA_ID, -1)
+            if (id == null || id == 1) {
+                Toast.makeText(this, "Note can't be updated", Toast.LENGTH_SHORT).show()
+                return;
+            }
+
+            val title: String = data?.getStringExtra(AddEditNoteActivity.EXTRA_TITLE)!!
+            val description: String = data.getStringExtra(AddEditNoteActivity.EXTRA_DESCRIPTION)!!
+            val priority: Int = data.getIntExtra(AddEditNoteActivity.EXTRA_PRIORITY, 1)
+
+            val note: Note = Note(title, description, priority)
+            // We need this because without the primary key, room can't identify this entry
+            note.id = id;
+            noteViewModel.update(note)
+
+            Toast.makeText(this, "Note updated", Toast.LENGTH_SHORT).show()
         } else {
             // This is for when the cancel button is pressed instead
             Toast.makeText(this, "Note not saved", Toast.LENGTH_SHORT).show()

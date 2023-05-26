@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".AddNoteActivity">
+    tools:context=".AddEditNoteActivity">
 
 <!--    We want to add two edit text and a # picker here. The save button-->
 <!--    will be a menu option, which we add over the activity-->
