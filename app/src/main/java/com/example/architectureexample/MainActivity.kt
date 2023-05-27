@@ -79,10 +79,10 @@ class MainActivity : AppCompatActivity() {
         // it's statues
         noteViewModel.getAllNotes().observe(
             this,
-            Observer { list ->
-                list?.let {
-                    // Update RecyclerView
-                    adapter.notes = list
+            Observer { notes ->
+                notes?.let {
+                    // Update RecyclerView, updated with ListAdapter method
+                    adapter.submitList(notes)
                 }
             })
 

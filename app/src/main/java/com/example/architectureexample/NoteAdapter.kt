@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
 /*
@@ -17,23 +19,29 @@ and handles user interaction events.
 LayoutManager is responsible for positioning and measuring the items views within
 the RecyclerView. It determines how to items are arranged, such as in a linear
 vertical list or a grid.
+
+NoteAdapter will help with animations as it'll let us know what exact view is
+being modified, we just need to override two methods and Use teh DiffUtil.
+LiveData also gets handled through it's submitList() method
  */
-class NoteAdapter : RecyclerView.Adapter<NoteAdapter.NoteHolder>() {
+class NoteAdapter : ListAdapter<Note, NoteAdapter.NoteViewHolder>(NoteDiffUtil()) {
+
+    class NoteDiffUtil : DiffUtil.ItemCallback<Note>() {
+        override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean {
+            return (oldItem.id == newItem.id);
+        }
+
+        override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
+            return oldItem.title == newItem.title
+                    && oldItem.description == newItem.description
+                    && oldItem.priority == newItem.priority
+        }
+    }
 
     private lateinit var listener: OnItemClickListener
 
-    // Our list of Notes is initialize to avoid null pointers
-    var notes: List<Note> = arrayListOf()
-        set(value) {
-            field = value
-            // Main activity observes the live data, on change we get past a list of
-            // notes. Need a way to get the list of notes in our recycler view
-            // TODO: Will be removed later and replace
-            notifyDataSetChanged()
-        }
-
     fun getNoteAt(position: Int): Note {
-        return notes[position]
+        return getItem(position)
     }
 
     /*
@@ -42,7 +50,7 @@ class NoteAdapter : RecyclerView.Adapter<NoteAdapter.NoteHolder>() {
     recycles teh existing views.
     The ViewHolder acts as a container for views in a RecyclerView
      */
-    inner class NoteHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textViewTitle: TextView = itemView.findViewById(R.id.text_view_title)
         val textViewDescription: TextView = itemView.findViewById(R.id.text_view_description)
         val textViewPriority: TextView = itemView.findViewById(R.id.text_view_priority)
@@ -50,37 +58,35 @@ class NoteAdapter : RecyclerView.Adapter<NoteAdapter.NoteHolder>() {
         init {
             itemView.setOnClickListener {
                 val position: Int = adapterPosition
-                listener.onItemClick(notes[position])
+                // The new ListAdapter provides a getter method
+                listener.onItemClick(getItem(position))
             }
         }
     }
 
     // We create and return a NoteHolder, the layout we want to use for our single
     // items in our recycler view
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         // parent is just our recycler view, which is in the main activity so it can
         // get the context
         val itemView: View =
             LayoutInflater.from(parent.context).inflate(R.layout.note_item, parent, false)
 
-        return NoteHolder(itemView)
-    }
-
-    override fun getItemCount(): Int {
-        return notes.size
+        return NoteViewHolder(itemView)
     }
 
     // Get data from Note object into the views of our NoteHolder.
     // The holder is the view holder at this position.
-    override fun onBindViewHolder(holder: NoteHolder, position: Int) {
-        val currentNote: Note = notes[position]
+    override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
+        // ListAdapter providers a getter for Note at given position
+        val currentNote: Note = getItem(position)
         holder.textViewTitle.text = currentNote.title
         holder.textViewDescription.text = currentNote.description
         holder.textViewPriority.text = currentNote.priority.toString()
     }
 
     interface OnItemClickListener {
-        fun onItemClick(note : Note);
+        fun onItemClick(note: Note);
     }
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
